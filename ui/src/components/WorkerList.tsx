@@ -14,7 +14,7 @@ function WorkerList() {
 			<ul>
 				{workers.map((worker) => (
 					<li>
-						<WorkerComponent worker={worker} />
+						<WorkerComponent key={worker.id} worker={worker} />
 					</li>
 				))}
 			</ul>
