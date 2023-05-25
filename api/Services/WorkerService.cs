@@ -10,6 +10,7 @@ public class WorkerService
     public WorkerService(ILogger<WorkerService> logger)
     {
         this.Logger = logger;
+        this.RegisterSeedWorkers();
         Logger.LogDebug($"Worker Services dictionary instantiated with {workers.Count} workers");
     }
 
@@ -22,5 +23,15 @@ public class WorkerService
     public Task<IList<Worker>> GetAllAsync()
     {
         return Task.FromResult(workers.Values.ToList() as IList<Worker>);
+    }
+
+    private void RegisterSeedWorkers()
+    {
+        Guid guid = Guid.NewGuid();
+        this.workers.Add(guid, new WorkerBuilder().AddId(guid).AddName("Headache").Build());
+        guid = Guid.NewGuid();
+        this.workers.Add(guid, new WorkerBuilder().AddId(guid).AddName("Heart-Failure").Build());
+        guid = Guid.NewGuid();
+        this.workers.Add(guid, new WorkerBuilder().AddId(guid).AddName("Stress").Build());
     }
 }
