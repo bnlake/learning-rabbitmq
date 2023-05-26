@@ -8,12 +8,17 @@ function WorkerList() {
 	const [workers, setWorkers] = useState<Array<Worker>>([]);
 
 	useEffect(() => {
+		const controller = new AbortController();
+
 		async function fetchWorkers() {
-			const result = await client.GetAll();
+			const result = await client.GetAll(controller.signal);
 			setWorkers(() => result);
 		}
+
 		const client = new WorkersClient("https://localhost:7140");
 		fetchWorkers();
+
+		return () => controller.abort();
 	}, []);
 
 	return (
