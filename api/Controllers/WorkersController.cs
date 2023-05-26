@@ -1,9 +1,11 @@
 using api.Models;
 using api.Services;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Controllers;
 
+[EnableCors]
 [Route("[controller]")]
 public class WorkersController
 {
@@ -16,7 +18,7 @@ public class WorkersController
         this.service = service;
     }
 
-    [HttpGet]
+    [HttpGet(Name = "GetWorkers")]
     public async Task<IList<Worker>> GetAll()
     {
         return await service.GetAllAsync();
