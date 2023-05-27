@@ -5,7 +5,8 @@ services:
         build:
             dockerfile: ./rabbitmq/Dockerfile
         ports:
-          - 5673:5673
+          - 5672:5672
           - 15672:15672 # RabbitMQ UI - credentials: guest/guest
+        hostname: local-rabbitmq
         # volumes:
             # - ./rabbitmq/configuration:/etc/rabbitmq/conf.d # Uncomment when we're ready to use a custom config file
