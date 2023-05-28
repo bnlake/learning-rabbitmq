@@ -1,4 +1,5 @@
 using api.Services;
+using RabbitMQ.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<WorkerService>();
+builder.Services.AddSingleton<IConnectionFactory>(provider => new ConnectionFactory { HostName = "localhost", DispatchConsumersAsync = true });
 builder.Services.AddCors(o =>
 {
     o.AddDefaultPolicy(p => p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());

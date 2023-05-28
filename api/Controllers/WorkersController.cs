@@ -24,10 +24,11 @@ public class WorkersController : Controller
     }
 
     [HttpGet("workers/{id}/start")]
-    public IActionResult StartWorker(Guid id)
+    public async Task<IActionResult> StartWorker(Guid id)
     {
         if (service.Exists(id))
         {
+            await service.StartWorker(id);
             return Ok();
         }
         else

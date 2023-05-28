@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using worker.Models;
@@ -59,12 +60,12 @@ public class WorkerStartQueueListener : BackgroundService
     {
         var body = Args.Body.ToArray();
         var message = Encoding.UTF8.GetString(body);
-        Guid workerId = Guid.NewGuid();
+        WorkerStartEvent startEvent = JsonSerializer.Deserialize<WorkerStartEvent>(message);
 
-        await Publisher.Publish(new PublishEvent { WorkerID = workerId, Event = WorkerEvent.Start });
+        await Publisher.Publish(new PublishEvent { WorkerID = startEvent.WorkerID, Event = WorkerEvent.Start });
 
         await Task.Delay(TimeSpan.FromSeconds(2));
 
-        await Publisher.Publish(new PublishEvent { WorkerID = workerId, Event = WorkerEvent.Finish });
+        await Publisher.Publish(new PublishEvent { WorkerID = startEvent.WorkerID, Event = WorkerEvent.Finish });
     }
 }
