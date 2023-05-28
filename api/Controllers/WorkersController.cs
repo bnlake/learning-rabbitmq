@@ -6,8 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Controllers;
 
 [EnableCors]
-[Route("[controller]")]
-public class WorkersController
+public class WorkersController : Controller
 {
     private readonly ILogger<WorkersController> Logger;
     private readonly WorkerService service;
@@ -18,9 +17,35 @@ public class WorkersController
         this.service = service;
     }
 
-    [HttpGet(Name = "GetWorkers")]
+    [HttpGet("workers/")]
     public async Task<IList<Worker>> GetAll()
     {
         return await service.GetAllAsync();
+    }
+
+    [HttpGet("workers/{id}/start")]
+    public IActionResult StartWorker(Guid id)
+    {
+        if (service.Exists(id))
+        {
+            return Ok();
+        }
+        else
+        {
+            return NotFound();
+        }
+    }
+
+    [HttpGet("workers/{id}/stop")]
+    public IActionResult StopWorker(Guid id)
+    {
+        if (service.Exists(id))
+        {
+            return Ok();
+        }
+        else
+        {
+            return NotFound();
+        }
     }
 }

@@ -25,6 +25,11 @@ public class WorkerService
         return Task.FromResult(workers.Values.ToList() as IList<Worker>);
     }
 
+    public bool Exists(Guid id)
+    {
+        return workers.ContainsKey(id);
+    }
+
     private void RegisterSeedWorkers()
     {
         Guid guid = Guid.NewGuid();
