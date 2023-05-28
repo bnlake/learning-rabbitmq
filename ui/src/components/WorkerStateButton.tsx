@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useReducer } from "react";
 
 import Worker from "../models/Worker";
@@ -13,8 +14,8 @@ const reducer = (state: WorkerState, action: WorkerEvent) => {
 		case WorkerEvent.Start: {
 			switch (state) {
 				case WorkerState.Waiting:
-					return WorkerState.Running;
 				case WorkerState.Done:
+				case WorkerState.Errored:
 					return WorkerState.Running;
 				default:
 					return state;
@@ -36,25 +37,30 @@ const reducer = (state: WorkerState, action: WorkerEvent) => {
 					return state;
 			}
 		}
-		default:
-			return state;
+		case WorkerEvent.Error: {
+			return WorkerState.Errored;
+		}
 	}
 };
 
 const WorkerStateButton: React.FC<Props> = ({ worker }) => {
 	const [state, dispatch] = useReducer(reducer, WorkerState.Waiting);
 
-	const startWorker = () => {
+	const startWorker = async () => {
 		dispatch(WorkerEvent.Start);
-		// make http request
-		setTimeout(() => {
-			dispatch(WorkerEvent.Finish);
-		}, 2000);
+		await axios
+			.get(`${import.meta.env.VITE_API_DOMAIN}/${worker.id}/start`)
+			.then(() => dispatch(WorkerEvent.Finish))
+			.catch(() => dispatch(WorkerEvent.Error));
 	};
 
-	const stopWorker = () => {
+	const stopWorker = async () => {
 		dispatch(WorkerEvent.Stop);
-		// make http request
+
+		await axios
+			.get(`${import.meta.env.VITE_API_DOMAIN}/${worker.id}/stop`)
+			.then(() => dispatch(WorkerEvent.Finish))
+			.catch(() => dispatch(WorkerEvent.Error));
 	};
 
 	switch (state) {
@@ -64,6 +70,8 @@ const WorkerStateButton: React.FC<Props> = ({ worker }) => {
 			return <button onClick={stopWorker}>Working Running ...</button>;
 		case WorkerState.Done:
 			return <button onClick={startWorker}>Worker finished</button>;
+		case WorkerState.Errored:
+			return <button onClick={startWorker}>Error starting!</button>;
 	}
 };
 
