@@ -4,15 +4,15 @@ using RabbitMQ.Client.Events;
 
 namespace worker;
 
-public class QueueListener : BackgroundService
+public class WorkerStartQueueListener : BackgroundService
 {
-    private readonly ILogger<QueueListener> Logger;
+    private readonly ILogger<WorkerStartQueueListener> Logger;
     private IConnectionFactory Factory;
     private IConnection Connection;
     private IModel Channel;
     private const string QueueName = "worker.start";
 
-    public QueueListener(ILogger<QueueListener> logger, IConnectionFactory factory)
+    public WorkerStartQueueListener(ILogger<WorkerStartQueueListener> logger, IConnectionFactory factory)
     {
         Logger = logger;
         Factory = factory;
@@ -26,7 +26,11 @@ public class QueueListener : BackgroundService
         this.Channel = Connection.CreateModel();
         Logger.LogInformation($"Created channel to RabbitMQ");
 
-        Channel.QueueDeclarePassive(QueueName);
+        Channel.QueueDeclare(queue: QueueName,
+        durable: false,
+        exclusive: false,
+        autoDelete: false,
+        arguments: null);
         Logger.LogInformation($"Declared passive queue {QueueName}");
 
         return base.StartAsync(cancellationToken);
