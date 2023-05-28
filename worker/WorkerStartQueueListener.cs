@@ -1,37 +1,36 @@
 using System.Text;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using worker.Models;
 
 namespace worker;
 
 public class WorkerStartQueueListener : BackgroundService
 {
     private readonly ILogger<WorkerStartQueueListener> Logger;
+    private readonly QueuePublisher Publisher;
     private IConnectionFactory Factory;
     private IConnection Connection;
     private IModel Channel;
     private const string QueueName = "worker.start";
 
-    public WorkerStartQueueListener(ILogger<WorkerStartQueueListener> logger, IConnectionFactory factory)
+    public WorkerStartQueueListener(ILogger<WorkerStartQueueListener> logger, IConnectionFactory factory, QueuePublisher publisher)
     {
         Logger = logger;
+        Publisher = publisher;
         Factory = factory;
     }
 
     public override Task StartAsync(CancellationToken cancellationToken)
     {
         this.Connection = Factory.CreateConnection();
-        Logger.LogInformation($"Created connection to RabbitMQ");
-
         this.Channel = Connection.CreateModel();
-        Logger.LogInformation($"Created channel to RabbitMQ");
 
         Channel.QueueDeclare(queue: QueueName,
         durable: false,
         exclusive: false,
         autoDelete: false,
         arguments: null);
-        Logger.LogInformation($"Declared passive queue {QueueName}");
 
         return base.StartAsync(cancellationToken);
     }
@@ -41,15 +40,11 @@ public class WorkerStartQueueListener : BackgroundService
         await base.StopAsync(cancellationToken);
 
         Channel.Close();
-        Logger.LogInformation($"Closed channel to RabbitMQ");
-
         Connection.Close();
-        Logger.LogInformation($"Closed connection to RabbitMQ");
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        Logger.LogInformation($"Executing queue listener");
         stoppingToken.ThrowIfCancellationRequested();
 
         var consumer = new AsyncEventingBasicConsumer(Channel);
@@ -64,6 +59,12 @@ public class WorkerStartQueueListener : BackgroundService
     {
         var body = Args.Body.ToArray();
         var message = Encoding.UTF8.GetString(body);
-        Console.WriteLine($" [x] Received {message}");
+        Guid workerId = Guid.NewGuid();
+
+        await Publisher.Publish(new PublishEvent { WorkerID = workerId, Event = WorkerEvent.Start });
+
+        await Task.Delay(TimeSpan.FromSeconds(2));
+
+        await Publisher.Publish(new PublishEvent { WorkerID = workerId, Event = WorkerEvent.Finish });
     }
 }

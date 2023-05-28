@@ -7,6 +7,8 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddSingleton<IConnectionFactory>(provider => new ConnectionFactory { HostName = "localhost", DispatchConsumersAsync = true });
         // https://stackoverflow.com/questions/51254053/how-to-inject-a-reference-to-a-specific-ihostedservice-implementation
         // to allow access between background services
+        services.AddSingleton<QueuePublisher>();
+        services.AddHostedService<BackgroundServiceStarter<QueuePublisher>>();
         services.AddSingleton<WorkerStartQueueListener>();
         services.AddHostedService<BackgroundServiceStarter<WorkerStartQueueListener>>();
     })
