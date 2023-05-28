@@ -15,7 +15,7 @@ function WorkerList() {
 			setWorkers(() => result);
 		}
 
-		const client = new WorkersClient("https://localhost:7140");
+		const client = new WorkersClient(import.meta.env.VITE_API_DOMAIN);
 		fetchWorkers();
 
 		return () => controller.abort();
@@ -26,8 +26,8 @@ function WorkerList() {
 			<h1>Workers</h1>
 			<ul>
 				{workers.map((worker) => (
-					<li>
-						<WorkerComponent key={worker.id} worker={worker} />
+					<li key={worker.id}>
+						<WorkerComponent worker={worker} />
 					</li>
 				))}
 			</ul>
