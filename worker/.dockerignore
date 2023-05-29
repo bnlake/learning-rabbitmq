@@ -3,3 +3,4 @@ Dockerfile
 **/appsettings.*.json
 **/bin
 **/obj
+**/node_modules

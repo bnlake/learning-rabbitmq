@@ -1,2 +1,3 @@
 Dockerfile
-**/.env*
+**/.env.*
+**/node_modules

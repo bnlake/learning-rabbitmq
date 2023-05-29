@@ -3,10 +3,40 @@ version: "3"
 services:
     rabbitmq:
         build:
-            dockerfile: ./rabbitmq/Dockerfile
+            dockerfile: ./Dockerfile
+            context: ./rabbitmq
         ports:
-          - 5672:5672
-          - 15672:15672 # RabbitMQ UI - credentials: guest/guest
-        hostname: local-rabbitmq
+            - 5672:5672
+            - 15672:15672 # RabbitMQ UI - credentials: guest/guest
+        hostname: rabbitmq
         # volumes:
-            # - ./rabbitmq/configuration:/etc/rabbitmq/conf.d # Uncomment when we're ready to use a custom config file
+        # - ./rabbitmq/configuration:/etc/rabbitmq/conf.d # Uncomment when we're ready to use a custom config file
+
+    ui:
+        build:
+            dockerfile: ./Dockerfile
+            context: ./ui
+        ports:
+            - 8080:80
+        hostname: ui
+        environment:
+            - API_URL=${API_URL}
+
+    api:
+        build:
+            dockerfile: ./Dockerfile
+            context: ./api
+        ports:
+            - 8081:80
+            - 8082:443
+        hostname: api
+        environment:
+            - RABBITMQ_URL=${RABBITMQ_URL}
+
+    worker:
+        build:
+            dockerfile: ./Dockerfile
+            context: ./worker
+        hostname: worker
+        environment:
+            - RABBITMQ_URL=${RABBITMQ_URL}

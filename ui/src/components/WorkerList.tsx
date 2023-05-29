@@ -14,8 +14,8 @@ function WorkerList() {
 			const result = await client.GetAll(controller.signal);
 			setWorkers(() => result);
 		}
-
-		const client = new WorkersClient(import.meta.env.VITE_API_DOMAIN);
+		const api_url = import.meta.env.API_URL ?? import.meta.env.VITE_API_URL;
+		const client = new WorkersClient(api_url);
 		fetchWorkers();
 
 		return () => controller.abort();

@@ -11,7 +11,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<WorkerService>();
-builder.Services.AddSingleton<IConnectionFactory>(provider => new ConnectionFactory { HostName = "localhost", DispatchConsumersAsync = true });
+builder.Services.AddSingleton<IConnectionFactory>(provider => new ConnectionFactory { HostName = Environment.GetEnvironmentVariable("RABBITMQ_URL"), DispatchConsumersAsync = true });
 builder.Services.AddCors(o =>
 {
     o.AddDefaultPolicy(p => p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
@@ -25,8 +25,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseHttpsRedirection();
 
 app.UseRouting();
 app.UseCors();

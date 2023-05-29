@@ -50,7 +50,7 @@ const WorkerStateButton: React.FC<Props> = ({ worker }) => {
 		dispatch(WorkerEvent.Start);
 		await axios
 			.get(
-				`${import.meta.env.VITE_API_DOMAIN}/workers/${worker.id}/start`
+				`${import.meta.env.VITE_API_URL}/workers/${worker.id}/start`
 			)
 			.then(() => dispatch(WorkerEvent.Finish))
 			.catch(() => dispatch(WorkerEvent.Error));
@@ -60,7 +60,7 @@ const WorkerStateButton: React.FC<Props> = ({ worker }) => {
 		dispatch(WorkerEvent.Stop);
 
 		await axios
-			.get(`${import.meta.env.VITE_API_DOMAIN}/workers/${worker.id}/stop`)
+			.get(`${import.meta.env.VITE_API_URL}/workers/${worker.id}/stop`)
 			.then(() => dispatch(WorkerEvent.Finish))
 			.catch(() => dispatch(WorkerEvent.Error));
 	};
