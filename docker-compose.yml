@@ -21,6 +21,8 @@ services:
         hostname: ui
         environment:
             - API_URL=${API_URL}
+        depends_on:
+            - api
 
     api:
         build:
@@ -32,6 +34,8 @@ services:
         hostname: api
         environment:
             - RABBITMQ_URL=${RABBITMQ_URL}
+        depends_on:
+            - rabbitmq
 
     worker:
         build:
@@ -40,3 +44,5 @@ services:
         hostname: worker
         environment:
             - RABBITMQ_URL=${RABBITMQ_URL}
+        depends_on:
+            - rabbitmq
