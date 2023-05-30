@@ -64,8 +64,14 @@ public class WorkerStartQueueListener : BackgroundService
 
         await Publisher.Publish(new PublishEvent { WorkerID = startEvent.WorkerID, Event = WorkerEvent.Start });
 
-        await Task.Delay(TimeSpan.FromSeconds(2));
+        await DoWork();
 
         await Publisher.Publish(new PublishEvent { WorkerID = startEvent.WorkerID, Event = WorkerEvent.Finish });
+    }
+
+    private async Task DoWork()
+    {
+        // Simulate a potential long running task
+        await Task.Delay(TimeSpan.FromSeconds(new Random().Next(1, 5)));
     }
 }
