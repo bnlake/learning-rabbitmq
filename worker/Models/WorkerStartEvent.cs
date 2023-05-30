@@ -1,4 +1,4 @@
 public struct WorkerStartEvent
 {
-    public Guid WorkerID;
+    public Guid WorkerID { get; set; }
 }

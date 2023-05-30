@@ -12,6 +12,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<WorkerService>();
 builder.Services.AddSingleton<IConnectionFactory>(provider => new ConnectionFactory { HostName = Environment.GetEnvironmentVariable("RABBITMQ_URL"), DispatchConsumersAsync = true });
+builder.Services.AddHostedService<WorkerEventListener>();
 builder.Services.AddCors(o =>
 {
     o.AddDefaultPolicy(p => p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());

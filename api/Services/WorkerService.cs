@@ -53,12 +53,14 @@ public class WorkerService
 
     public Task StartWorker(Guid id)
     {
-        var x = new { WorkerId = id };
+        var x = new { WorkerID = id };
         var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(x));
+
         Channel.BasicPublish(exchange: String.Empty,
         routingKey: QueueName,
         basicProperties: null,
         body: body);
+
         return Task.CompletedTask;
     }
 
