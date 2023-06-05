@@ -1,18 +1,21 @@
 using domain.Models;
 using EasyNetQ;
+using worker.Handlers;
 
 namespace worker;
 
-public class WorkerStartQueueListener : BackgroundService
+public class WorkerEventListener : BackgroundService
 {
-    private readonly ILogger<WorkerStartQueueListener> Logger;
+    private readonly ILogger<WorkerEventListener> Logger;
     private readonly QueuePublisher Publisher;
     private readonly IBus Bus;
-    public WorkerStartQueueListener(ILogger<WorkerStartQueueListener> logger, IBus bus, QueuePublisher publisher)
+    private readonly EventHandlerFactory HandlerFactory;
+    public WorkerEventListener(ILogger<WorkerEventListener> logger, IBus bus, QueuePublisher publisher, EventHandlerFactory factory)
     {
         Logger = logger;
         Bus = bus;
         Publisher = publisher;
+        HandlerFactory = factory;
     }
 
     public override async Task StopAsync(CancellationToken cancellationToken)
@@ -28,16 +31,8 @@ public class WorkerStartQueueListener : BackgroundService
 
     private async Task HandleMessage(WorkerEvent e)
     {
-        await Publisher.Publish(new WorkerState { WorkerId = e.WorkerId, State = "start" });
-
-        await DoWork();
-
-        await Publisher.Publish(new WorkerState { WorkerId = e.WorkerId, State = "finish" });
+        var handler = HandlerFactory.CreateHandler(e.Event);
+        await handler.Execute(e);
     }
 
-    private async Task DoWork()
-    {
-        // Simulate a potential long running task
-        await Task.Delay(TimeSpan.FromSeconds(new Random().Next(1, 5)));
-    }
 }
