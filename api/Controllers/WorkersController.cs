@@ -1,4 +1,4 @@
-using api.Models;
+using domain.Models;
 using api.Services;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;

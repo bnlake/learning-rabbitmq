@@ -1,7 +1,6 @@
 using api.Models;
+using domain.Models;
 using EasyNetQ;
-using System.Text;
-using System.Text.Json;
 
 namespace api.Services;
 
@@ -37,13 +36,13 @@ public class WorkerService
 
     public Task StartWorker(Guid id)
     {
-        var e = new WorkerStartEvent { WorkerID = id };
+        var e = new WorkerEvent { WorkerId = id, Event = "start" };
         return Bus.SendReceive.SendAsync<WorkerEvent>("worker.event", e);
     }
 
     public Task StopWorker(Guid id)
     {
-        var e = new WorkerStopEvent { WorkerID = id };
+        var e = new WorkerEvent { WorkerId = id, Event = "stop" };
         return Bus.SendReceive.SendAsync<WorkerEvent>("worker.event", e);
     }
 

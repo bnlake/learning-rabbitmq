@@ -1,3 +1,5 @@
+using domain.Models;
+
 namespace api.Models;
 
 public class WorkerBuilder

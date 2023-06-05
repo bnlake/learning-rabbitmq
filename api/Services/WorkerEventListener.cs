@@ -1,5 +1,5 @@
 using api.Hubs;
-using api.Models;
+using domain.Models;
 using EasyNetQ;
 using Microsoft.AspNetCore.SignalR;
 
@@ -28,10 +28,10 @@ public class WorkerEventListener : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        await Bus.SendReceive.ReceiveAsync<WorkerStateChange>("worker.state", HandleMessage);
+        await Bus.SendReceive.ReceiveAsync<WorkerState>("worker.state", HandleMessage);
     }
 
-    private Task HandleMessage(WorkerStateChange state)
+    private Task HandleMessage(WorkerState state)
     {
 
         Logger.LogInformation($"Handled event {state.State} for worker {state.WorkerId}");
