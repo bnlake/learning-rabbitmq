@@ -1,5 +1,5 @@
+using domain.Models;
 using EasyNetQ;
-using worker.Models;
 
 namespace worker;
 
@@ -28,11 +28,11 @@ public class WorkerStartQueueListener : BackgroundService
 
     private async Task HandleMessage(WorkerEvent e)
     {
-        await Publisher.Publish(new PublishState { WorkerId = e.WorkerId, State = "start" });
+        await Publisher.Publish(new WorkerState { WorkerId = e.WorkerId, State = "start" });
 
         await DoWork();
 
-        await Publisher.Publish(new PublishState { WorkerId = e.WorkerId, State = "finish" });
+        await Publisher.Publish(new WorkerState { WorkerId = e.WorkerId, State = "finish" });
     }
 
     private async Task DoWork()

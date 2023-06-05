@@ -1,5 +1,5 @@
+using domain.Models;
 using EasyNetQ;
-using worker.Models;
 
 public class QueuePublisher : BackgroundService
 {
@@ -23,9 +23,9 @@ public class QueuePublisher : BackgroundService
         await Task.CompletedTask;
     }
 
-    public Task Publish(PublishState e)
+    public Task Publish(WorkerState e)
     {
         Logger.LogInformation($"Published {e.State} for {e.WorkerId}");
-        return Bus.SendReceive.SendAsync<PublishState>("worker.state", e);
+        return Bus.SendReceive.SendAsync<WorkerState>("worker.state", e);
     }
 }
