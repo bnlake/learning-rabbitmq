@@ -12,7 +12,8 @@ public class WorkerService
     private IConnectionFactory Factory;
     private IConnection Connection;
     private IModel Channel;
-    private const string QueueName = "worker.start";
+    private const string StartQueueName = "worker.start";
+    private const string StopQueueName = "worker.stop";
 
     public WorkerService(ILogger<WorkerService> logger, IConnectionFactory factory)
     {
@@ -28,7 +29,13 @@ public class WorkerService
         this.Connection = Factory.CreateConnection();
         this.Channel = Connection.CreateModel();
 
-        Channel.QueueDeclare(queue: QueueName,
+        Channel.QueueDeclare(queue: StartQueueName,
+        durable: false,
+        exclusive: false,
+        autoDelete: false,
+        arguments: null);
+
+        Channel.QueueDeclare(queue: StopQueueName,
         durable: false,
         exclusive: false,
         autoDelete: false,
@@ -57,7 +64,20 @@ public class WorkerService
         var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(x));
 
         Channel.BasicPublish(exchange: String.Empty,
-        routingKey: QueueName,
+        routingKey: StartQueueName,
+        basicProperties: null,
+        body: body);
+
+        return Task.CompletedTask;
+    }
+
+    public Task StopWorker(Guid id)
+    {
+        var x = new { WorkerID = id };
+        var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(x));
+
+        Channel.BasicPublish(exchange: String.Empty,
+        routingKey: StopQueueName,
         basicProperties: null,
         body: body);
 

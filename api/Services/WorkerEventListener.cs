@@ -1,6 +1,8 @@
 using System.Text;
 using System.Text.Json;
+using api.Hubs;
 using api.Models;
+using Microsoft.AspNetCore.SignalR;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
@@ -10,16 +12,18 @@ public class WorkerEventListener : BackgroundService
 {
     private readonly ILogger<WorkerEventListener> Logger;
     private readonly WorkerService Service;
+    private readonly IHubContext<WorkerHub> HubContext;
     private IConnectionFactory Factory;
     private IConnection Connection;
     private IModel Channel;
     private const string QueueName = "worker.events";
 
-    public WorkerEventListener(ILogger<WorkerEventListener> logger, IConnectionFactory factory, WorkerService service)
+    public WorkerEventListener(ILogger<WorkerEventListener> logger, IConnectionFactory factory, WorkerService service, IHubContext<WorkerHub> hubContext)
     {
         this.Logger = logger;
         this.Factory = factory;
         this.Service = service;
+        this.HubContext = hubContext;
     }
 
     public override Task StartAsync(CancellationToken cancellationToken)
@@ -56,12 +60,13 @@ public class WorkerEventListener : BackgroundService
         await Task.CompletedTask;
     }
 
-    private async Task HandleMessage(object Model, BasicDeliverEventArgs Args)
+    private Task HandleMessage(object Model, BasicDeliverEventArgs Args)
     {
         var body = Args.Body.ToArray();
         var message = Encoding.UTF8.GetString(body);
         WorkerEvent workerEvent = JsonSerializer.Deserialize<WorkerEvent>(message);
 
         Logger.LogInformation($"Handled event {workerEvent.Event} for worker {workerEvent.WorkerID}");
+        return HubContext.Clients.Group(workerEvent.WorkerID.ToString()).SendAsync("ReceiveWorkerState", workerEvent.Event);
     }
 }

@@ -1,68 +1,25 @@
 import axios from "axios";
-import { useReducer } from "react";
+// import { useReducer } from "react";
 
 import Worker from "../models/Worker";
 import { WorkerState } from "../models/WorkerState";
-import { WorkerEvent } from "../models/WorkerEvent";
+import { HubConnection } from "@microsoft/signalr";
 
 interface Props {
 	worker: Worker;
+	state: WorkerState;
+	connection: HubConnection | null;
 }
 
-const reducer = (state: WorkerState, action: WorkerEvent) => {
-	switch (action) {
-		case WorkerEvent.Start: {
-			switch (state) {
-				case WorkerState.Waiting:
-				case WorkerState.Done:
-				case WorkerState.Errored:
-					return WorkerState.Running;
-				default:
-					return state;
-			}
-		}
-		case WorkerEvent.Stop: {
-			switch (state) {
-				case WorkerState.Running:
-					return WorkerState.Waiting;
-				default:
-					return state;
-			}
-		}
-		case WorkerEvent.Finish: {
-			switch (state) {
-				case WorkerState.Running:
-					return WorkerState.Done;
-				default:
-					return state;
-			}
-		}
-		case WorkerEvent.Error: {
-			return WorkerState.Errored;
-		}
-	}
-};
-
-const WorkerStateButton: React.FC<Props> = ({ worker }) => {
-	const [state, dispatch] = useReducer(reducer, WorkerState.Waiting);
-
+const WorkerStateButton: React.FC<Props> = ({ worker, state, connection }) => {
 	const startWorker = async () => {
-		dispatch(WorkerEvent.Start);
-		await axios
-			.get(
-				`${import.meta.env.VITE_API_URL}/workers/${worker.id}/start`
-			)
-			.then(() => dispatch(WorkerEvent.Finish))
-			.catch(() => dispatch(WorkerEvent.Error));
+		console.log(`Invoking start for ${worker.id}`);
+		connection?.invoke("StartWorker", worker.id);
 	};
 
 	const stopWorker = async () => {
-		dispatch(WorkerEvent.Stop);
-
-		await axios
-			.get(`${import.meta.env.VITE_API_URL}/workers/${worker.id}/stop`)
-			.then(() => dispatch(WorkerEvent.Finish))
-			.catch(() => dispatch(WorkerEvent.Error));
+		console.log(`Invoking start for ${worker.id}`);
+		connection?.invoke("StartWorker", worker.id);
 	};
 
 	switch (state) {

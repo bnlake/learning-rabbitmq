@@ -1,3 +1,4 @@
+using api.Hubs;
 using api.Services;
 using RabbitMQ.Client;
 
@@ -13,10 +14,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<WorkerService>();
 builder.Services.AddSingleton<IConnectionFactory>(provider => new ConnectionFactory { HostName = Environment.GetEnvironmentVariable("RABBITMQ_URL"), DispatchConsumersAsync = true });
 builder.Services.AddHostedService<WorkerEventListener>();
-builder.Services.AddCors(o =>
-{
-    o.AddDefaultPolicy(p => p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
-});
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -28,7 +26,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseRouting();
-app.UseCors();
+app.UseCors(builder => builder.AllowAnyHeader().WithOrigins("http://localhost*").AllowCredentials().AllowAnyMethod().SetIsOriginAllowed(x => true));
+app.MapHub<WorkerHub>("/workerhub");
 
 app.MapControllers();
 
