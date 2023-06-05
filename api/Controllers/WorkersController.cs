@@ -38,10 +38,11 @@ public class WorkersController : Controller
     }
 
     [HttpGet("workers/{id}/stop")]
-    public IActionResult StopWorker(Guid id)
+    public async Task<IActionResult> StopWorker(Guid id)
     {
         if (service.Exists(id))
         {
+            await service.StopWorker(id);
             return Ok();
         }
         else
