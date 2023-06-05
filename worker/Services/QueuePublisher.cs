@@ -1,6 +1,8 @@
 using domain.Models;
 using EasyNetQ;
 
+namespace worker.Services;
+
 public class QueuePublisher : BackgroundService
 {
     private readonly ILogger<QueuePublisher> Logger;

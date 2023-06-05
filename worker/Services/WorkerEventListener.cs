@@ -2,7 +2,7 @@ using domain.Models;
 using EasyNetQ;
 using worker.Handlers;
 
-namespace worker;
+namespace worker.Services;
 
 public class WorkerEventListener : BackgroundService
 {

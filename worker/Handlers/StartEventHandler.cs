@@ -1,3 +1,4 @@
+using worker.Services;
 using domain.Models;
 
 namespace worker.Handlers;

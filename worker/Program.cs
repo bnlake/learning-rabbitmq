@@ -1,5 +1,5 @@
 using EasyNetQ;
-using worker;
+using worker.Services;
 using worker.Handlers;
 
 IHost host = Host.CreateDefaultBuilder(args)

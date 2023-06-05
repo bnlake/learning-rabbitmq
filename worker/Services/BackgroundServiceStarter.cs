@@ -1,3 +1,5 @@
+namespace worker.Services;
+
 /// https://stackoverflow.com/questions/51254053/how-to-inject-a-reference-to-a-specific-ihostedservice-implementation
 public class BackgroundServiceStarter<T> : IHostedService where T : IHostedService
 {
