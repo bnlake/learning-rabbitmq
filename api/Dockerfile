@@ -1,8 +1,10 @@
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
-WORKDIR /app
 
+COPY ./domain /domain
+
+WORKDIR /app
 # Copy everything
-COPY . ./
+COPY ./api ./
 # Restore as distinct layers
 RUN dotnet restore
 # Build and publish a release

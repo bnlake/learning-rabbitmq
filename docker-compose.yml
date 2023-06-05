@@ -31,8 +31,8 @@ services:
 
     api:
         build:
-            dockerfile: ./Dockerfile
-            context: ./api
+            dockerfile: ./api/Dockerfile
+            context: ./
         ports:
             - 8081:80
             - 8082:443
@@ -44,8 +44,8 @@ services:
 
     worker:
         build:
-            dockerfile: ./Dockerfile
-            context: ./worker
+            dockerfile: ./worker/Dockerfile
+            context: ./
         hostname: worker
         environment:
             - RABBITMQ_URL=${RABBITMQ_URL}
