@@ -39,7 +39,6 @@ const WorkerComponent: React.FC<Props> = ({ worker }) => {
 	}, [connection, worker.id]);
 
 	function handleMessage(message: string) {
-		console.log(message);
 		switch (message) {
 			case "start":
 				setWorkerState(() => WorkerState.Running);

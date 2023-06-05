@@ -10,12 +10,10 @@ interface Props {
 
 const WorkerStateButton: React.FC<Props> = ({ worker, state, connection }) => {
 	const startWorker = async () => {
-		console.log(`Invoking start for ${worker.id}`);
 		connection?.invoke("StartWorker", worker.id);
 	};
 
 	const stopWorker = async () => {
-		console.log(`Invoking start for ${worker.id}`);
 		connection?.invoke("StartWorker", worker.id);
 	};
 
