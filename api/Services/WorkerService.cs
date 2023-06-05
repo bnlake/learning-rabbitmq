@@ -1,5 +1,5 @@
-using RabbitMQ.Client;
 using api.Models;
+using EasyNetQ;
 using System.Text;
 using System.Text.Json;
 
@@ -9,37 +9,14 @@ public class WorkerService
 {
     private readonly ILogger<WorkerService> Logger;
     private readonly IDictionary<Guid, Worker> workers = new Dictionary<Guid, Worker>();
-    private IConnectionFactory Factory;
-    private IConnection Connection;
-    private IModel Channel;
-    private const string StartQueueName = "worker.start";
-    private const string StopQueueName = "worker.stop";
+    private IBus Bus;
 
-    public WorkerService(ILogger<WorkerService> logger, IConnectionFactory factory)
+    public WorkerService(ILogger<WorkerService> logger, IBus bus)
     {
         this.Logger = logger;
-        this.Factory = factory;
+        this.Bus = bus;
         this.RegisterSeedWorkers();
         Logger.LogDebug($"Worker Services dictionary instantiated with {workers.Count} workers");
-        this.InitializeClient();
-    }
-
-    private void InitializeClient()
-    {
-        this.Connection = Factory.CreateConnection();
-        this.Channel = Connection.CreateModel();
-
-        Channel.QueueDeclare(queue: StartQueueName,
-        durable: false,
-        exclusive: false,
-        autoDelete: false,
-        arguments: null);
-
-        Channel.QueueDeclare(queue: StopQueueName,
-        durable: false,
-        exclusive: false,
-        autoDelete: false,
-        arguments: null);
     }
 
     public Task CreateAsync(Worker worker)
@@ -60,28 +37,14 @@ public class WorkerService
 
     public Task StartWorker(Guid id)
     {
-        var x = new { WorkerID = id };
-        var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(x));
-
-        Channel.BasicPublish(exchange: String.Empty,
-        routingKey: StartQueueName,
-        basicProperties: null,
-        body: body);
-
-        return Task.CompletedTask;
+        var e = new WorkerStartEvent { WorkerID = id };
+        return Bus.SendReceive.SendAsync<WorkerEvent>("worker.event", e);
     }
 
     public Task StopWorker(Guid id)
     {
-        var x = new { WorkerID = id };
-        var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(x));
-
-        Channel.BasicPublish(exchange: String.Empty,
-        routingKey: StopQueueName,
-        basicProperties: null,
-        body: body);
-
-        return Task.CompletedTask;
+        var e = new WorkerStopEvent { WorkerID = id };
+        return Bus.SendReceive.SendAsync<WorkerEvent>("worker.event", e);
     }
 
     private void RegisterSeedWorkers()

@@ -1,6 +1,6 @@
 using api.Hubs;
 using api.Services;
-using RabbitMQ.Client;
+using EasyNetQ;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +12,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<WorkerService>();
-builder.Services.AddSingleton<IConnectionFactory>(provider => new ConnectionFactory { HostName = Environment.GetEnvironmentVariable("RABBITMQ_URL"), DispatchConsumersAsync = true });
+builder.Services.AddSingleton<IBus>(_ => RabbitHutch.CreateBus($"host={Environment.GetEnvironmentVariable("RABBITMQ_URL")}"));
 builder.Services.AddHostedService<WorkerEventListener>();
 builder.Services.AddSignalR();
 

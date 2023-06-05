@@ -1,42 +1,21 @@
-using System.Text;
-using System.Text.Json;
-using RabbitMQ.Client;
+using EasyNetQ;
 using worker.Models;
 
 public class QueuePublisher : BackgroundService
 {
     private readonly ILogger<QueuePublisher> Logger;
-    private IConnectionFactory Factory;
-    private IConnection Connection;
-    private IModel Channel;
-    private const string QueueName = "worker.events";
+    private readonly IBus Bus;
 
-    public QueuePublisher(ILogger<QueuePublisher> logger, IConnectionFactory factory)
+    public QueuePublisher(ILogger<QueuePublisher> logger, IBus bus)
     {
         Logger = logger;
-        Factory = factory;
-    }
-
-    public override Task StartAsync(CancellationToken cancellationToken)
-    {
-        this.Connection = Factory.CreateConnection();
-        this.Channel = Connection.CreateModel();
-
-        Channel.QueueDeclare(queue: QueueName,
-        durable: false,
-        exclusive: false,
-        autoDelete: false,
-        arguments: null);
-
-        return base.StartAsync(cancellationToken);
+        Bus = bus;
     }
 
     public override async Task StopAsync(CancellationToken cancellationToken)
     {
         await base.StopAsync(cancellationToken);
-
-        Channel.Close();
-        Connection.Close();
+        Bus.Dispose();
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -44,17 +23,9 @@ public class QueuePublisher : BackgroundService
         await Task.CompletedTask;
     }
 
-    public Task Publish(PublishEvent e)
+    public Task Publish(PublishState e)
     {
-        var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(e));
-
-        Channel.BasicPublish(exchange: string.Empty,
-        routingKey: QueueName,
-        basicProperties: null,
-        body: body);
-
-        Logger.LogInformation($"Published {e.Event} for {e.WorkerID}");
-
-        return Task.CompletedTask;
+        Logger.LogInformation($"Published {e.State} for {e.WorkerId}");
+        return Bus.SendReceive.SendAsync<PublishState>("worker.state", e);
     }
 }

@@ -1,9 +1,7 @@
 namespace worker.Models;
 
-public struct WorkerEvent
+public class WorkerEvent
 {
-    public const string Start = "start";
-    public const string Stop = "stop";
-    public const string Finish = "finish";
-    public const string Error = "error";
+    public Guid WorkerId { get; set; }
+    public string Event { get; set; } = String.Empty;
 }

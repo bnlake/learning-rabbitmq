@@ -1,7 +1,7 @@
 namespace api.Models;
 
-public struct WorkerEvent
+public abstract class WorkerEvent
 {
     public Guid WorkerID { get; set; }
-    public string Event { get; set; }
+    public abstract string Event { get; }
 }

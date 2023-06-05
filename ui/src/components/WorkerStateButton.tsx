@@ -1,6 +1,3 @@
-import axios from "axios";
-// import { useReducer } from "react";
-
 import Worker from "../models/Worker";
 import { WorkerState } from "../models/WorkerState";
 import { HubConnection } from "@microsoft/signalr";
