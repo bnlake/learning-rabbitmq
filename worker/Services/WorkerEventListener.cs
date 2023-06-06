@@ -10,6 +10,7 @@ public class WorkerEventListener : BackgroundService
     private readonly QueuePublisher Publisher;
     private readonly IBus Bus;
     private readonly EventHandlerFactory HandlerFactory;
+
     public WorkerEventListener(ILogger<WorkerEventListener> logger, IBus bus, QueuePublisher publisher, EventHandlerFactory factory)
     {
         Logger = logger;
@@ -34,5 +35,4 @@ public class WorkerEventListener : BackgroundService
         var handler = HandlerFactory.CreateHandler(e.Event);
         await handler.Execute(e);
     }
-
 }

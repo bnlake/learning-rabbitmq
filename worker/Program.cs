@@ -6,6 +6,7 @@ IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services =>
     {
         services.AddSingleton<IBus>(provider => RabbitHutch.CreateBus($"host={Environment.GetEnvironmentVariable("RABBITMQ_URL")}"));
+        services.AddSingleton<WorkerService>();
         services.AddSingleton<EventHandlerFactory>();
         services.AddScoped<StartEventHandler>();
         services.AddScoped<StopEventHandler>();
