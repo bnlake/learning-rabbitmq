@@ -14,7 +14,7 @@ const WorkerStateButton: React.FC<Props> = ({ worker, state, connection }) => {
 	};
 
 	const stopWorker = async () => {
-		connection?.invoke("StartWorker", worker.id);
+		connection?.invoke("StopWorker", worker.id);
 	};
 
 	switch (state) {

@@ -33,6 +33,6 @@ public class WorkerHub : Hub
 
     public Task StopWorker(Guid workerId)
     {
-        return this.Service.StartWorker(workerId);
+        return this.Service.StopWorker(workerId);
     }
 }
