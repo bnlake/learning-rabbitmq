@@ -4,7 +4,7 @@ COPY ./domain /domain/
 
 WORKDIR /app
 # Copy everything
-COPY ./worker ./
+COPY ./reportingservice ./
 # Restore as distinct layers
 RUN dotnet restore
 # Build and publish a release
@@ -16,4 +16,4 @@ WORKDIR /App
 COPY --from=build /app/out .
 
 EXPOSE 80
-ENTRYPOINT ["dotnet", "worker.dll"]
+ENTRYPOINT ["dotnet", "reportingservice.dll"]
