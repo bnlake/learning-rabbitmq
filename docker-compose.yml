@@ -52,3 +52,12 @@ services:
         depends_on:
             - rabbitmq
 
+    notificationservice:
+        build:
+            dockerfile: ./notificationservice/Dockerfile
+            context: ./
+        hostname: notificationservice
+        environment:
+            - RABBITMQ_URL=${RABBITMQ_URL}
+        depends_on:
+            - rabbitmq
