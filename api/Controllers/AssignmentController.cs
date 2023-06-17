@@ -2,7 +2,7 @@ using api.Services;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
-namespace api.Controllers;
+namespace Controllers;
 
 [EnableCors]
 public class AssignmentController : Controller
