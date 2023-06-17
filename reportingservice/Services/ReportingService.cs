@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Models;
 
 namespace Services;
@@ -14,6 +15,6 @@ public class ReportingService
     public async Task AddReport(Report report)
     {
         await Task.Delay(TimeSpan.FromSeconds(1));
-        logger.LogInformation("Report added", report);
+        logger.LogInformation($"Report added {JsonSerializer.Serialize(report)}");
     }
 }
