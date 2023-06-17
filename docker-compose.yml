@@ -42,12 +42,13 @@ services:
         depends_on:
             - rabbitmq
 
-    worker:
+    reportingservice:
         build:
-            dockerfile: ./worker/Dockerfile
+            dockerfile: ./reportingservice/Dockerfile
             context: ./
-        hostname: worker
+        hostname: reportingservice
         environment:
             - RABBITMQ_URL=${RABBITMQ_URL}
         depends_on:
             - rabbitmq
+
