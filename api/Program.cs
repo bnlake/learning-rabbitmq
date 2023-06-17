@@ -1,4 +1,3 @@
-using api.Hubs;
 using api.Services;
 using EasyNetQ;
 
@@ -11,10 +10,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<WorkerService>();
+builder.Services.AddSingleton<AssignmentService>();
+builder.Services.AddSingleton<ContentService>();
 builder.Services.AddSingleton<IBus>(_ => RabbitHutch.CreateBus($"host={Environment.GetEnvironmentVariable("RABBITMQ_URL")}"));
-builder.Services.AddHostedService<WorkerEventListener>();
-builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -27,7 +25,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseRouting();
 app.UseCors(builder => builder.AllowAnyHeader().WithOrigins("http://localhost*").AllowCredentials().AllowAnyMethod().SetIsOriginAllowed(x => true));
-app.MapHub<WorkerHub>("/workerhub");
 
 app.MapControllers();
 
