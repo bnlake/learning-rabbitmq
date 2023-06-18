@@ -15,7 +15,7 @@ public class AssignmentService
         Bus = bus;
     }
 
-    public Task AssignContent(Guid patientId, Content content)
+    public Task AssignContent(string patientId, Content content)
     {
         Logger.LogInformation($"Publishing that {content.Id} was assigned to {patientId}");
         var e = new ContentAssignedEvent { PatientId = patientId, Payload = content };
