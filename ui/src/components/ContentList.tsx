@@ -12,7 +12,7 @@ const ContentList = forwardRef((_, ref: LegacyRef<HTMLSelectElement>) => {
 	}, [client]);
 
 	return (
-		<div style={{ display: "flex", flexDirection: "column" }}>
+		<div style={{ display: "flex", flexDirection: "column", margin: "1em" }}>
 			<label htmlFor="selectedContent">Available Content</label>
 			<select ref={ref} id="selectedContent" name="selectedContent">
 				{content.map((c) => (

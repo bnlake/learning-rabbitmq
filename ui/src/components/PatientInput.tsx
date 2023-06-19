@@ -2,7 +2,7 @@ import { LegacyRef, forwardRef } from "react";
 
 const PatientInput = forwardRef((_, ref: LegacyRef<HTMLInputElement>) => {
 	return (
-		<div style={{ display: "flex", flexDirection: "column" }}>
+		<div style={{ display: "flex", flexDirection: "column", margin: "1em" }}>
 			<label>Patient Identifier</label>
 			<input ref={ref} />
 		</div>
