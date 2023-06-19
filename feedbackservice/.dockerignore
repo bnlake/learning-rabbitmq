@@ -1,0 +1,6 @@
+Dockerfile
+**/.vscode
+**/appsettings.*.json
+**/bin
+**/obj
+**/node_modules

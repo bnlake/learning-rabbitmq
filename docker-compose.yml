@@ -61,3 +61,13 @@ services:
             - RABBITMQ_URL=${RABBITMQ_URL}
         depends_on:
             - rabbitmq
+
+    feedbackservice:
+        build:
+            dockerfile: ./feedbackservice/Dockerfile
+            context: ./
+        hostname: feedbackservice
+        environment:
+            - RABBITMQ_URL=${RABBITMQ_URL}
+        depends_on:
+            - rabbitmq
