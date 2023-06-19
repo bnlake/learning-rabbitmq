@@ -6,6 +6,7 @@ namespace Services;
 public class ReportingService
 {
     private readonly ILogger<ReportingService> logger;
+    private readonly Random random = new Random();
 
     public ReportingService(ILogger<ReportingService> logger)
     {
@@ -14,7 +15,7 @@ public class ReportingService
 
     public async Task AddReport(Report report)
     {
-        await Task.Delay(TimeSpan.FromSeconds(1));
+        await Task.Delay(TimeSpan.FromSeconds(random.NextInt64(1,4)));
         logger.LogInformation($"Report added {JsonSerializer.Serialize(report)}");
     }
 }
