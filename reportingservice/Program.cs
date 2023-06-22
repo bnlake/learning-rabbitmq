@@ -1,8 +1,12 @@
 using EasyNetQ;
 using Listeners;
 using Services;
+using Serilog;
+
+Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
 
 IHost host = Host.CreateDefaultBuilder(args)
+    .UseSerilog()
     .ConfigureServices(services =>
     {
         services.AddSingleton<ReportingService>();
