@@ -2,6 +2,7 @@ using Domain.Events;
 using EasyNetQ;
 using Models;
 using Services;
+using System.Reflection;
 
 namespace Listeners;
 
@@ -26,7 +27,7 @@ public class ContentAssignmentListener : BackgroundService
 
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        return bus.PubSub.SubscribeAsync<ContentAssignedEvent>(Guid.NewGuid().ToString(), HandleMessage, stoppingToken);
+        return bus.PubSub.SubscribeAsync<ContentAssignedEvent>(Assembly.GetExecutingAssembly().FullName, HandleMessage, stoppingToken);
     }
 
     private async Task HandleMessage(ContentAssignedEvent e)
