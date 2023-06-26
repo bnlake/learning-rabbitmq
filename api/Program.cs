@@ -6,7 +6,7 @@ Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Host.UseSerilog();
+builder.Host.UseSerilog((ctx, services, configuration) => configuration.ReadFrom.Configuration(ctx.Configuration));
 
 // Add services to the container.
 

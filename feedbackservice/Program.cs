@@ -8,7 +8,7 @@ using Serilog;
 Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
 
 IHost host = Host.CreateDefaultBuilder(args)
-    .UseSerilog()
+    .UseSerilog((ctx, services, configuration) => configuration.ReadFrom.Configuration(ctx.Configuration))
     .ConfigureServices(services =>
     {
         services.AddSingleton<FeedbackService>();
