@@ -12,7 +12,7 @@ services:
         # volumes:
         # - ./rabbitmq/configuration:/etc/rabbitmq/conf.d # Uncomment when we're ready to use a custom config file
         healthcheck:
-          test: rabbitmq-diagnostics -q check_running
+          test: ["CMD", "rabbitmq-diagnostics -q check_running"]
           interval: 30s
           timeout: 30s
           retries: 3
